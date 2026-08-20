@@ -30,8 +30,8 @@ flowchart TD
     subgraph Agent["Continuity agent (ADK, Cloud Run / Agent Engine)"]
         direction TB
         Detect["query_alerts()"] --> Invest["fetch_logs()"]
-        Invest --> Correlate["correlate_signals()\n(explicit Gemini call)"]
-        Correlate --> Remediate["remediate()\n(bounded, allowlisted)"]
+        Invest --> Correlate["correlate_signals()<br/>(explicit Gemini call)"]
+        Correlate --> Remediate["remediate()<br/>(bounded, allowlisted)"]
         Detect --> Log["log_decision()"]
         Invest --> Log
         Correlate --> Log
@@ -44,12 +44,12 @@ flowchart TD
 
     Gemini["Gemini (Vertex AI)"]
     Correlate <--> Gemini
-    Detect -. "tool-calling loop\ndriven by Gemini via ADK" .-> Gemini
-    Invest -. "" .-> Gemini
-    Remediate -. "" .-> Gemini
+    Detect -. "tool-calling loop, driven by Gemini via ADK" .-> Gemini
+    Invest -.-> Gemini
+    Remediate -.-> Gemini
 
-    Log --> PG[(Postgres\nincidents + decisions)]
-    PG --> FE["Next.js dashboard\n(read-only)"]
+    Log --> PG[(Postgres<br/>incidents + decisions)]
+    PG --> FE["Next.js dashboard<br/>(read-only)"]
 ```
 
 ## Components
