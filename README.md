@@ -25,12 +25,12 @@ trail.
 
 ```mermaid
 flowchart LR
-    Infra["Simulated infra\n(render / CDN / license-check)"] -->|metrics, logs| Grafana["Grafana Cloud\n(Prometheus + Loki)"]
-    Grafana -->|alert fires| Agent["Continuity agent\n(Python, ADK)"]
-    Agent <-->|reasoning| Gemini["Gemini\n(Vertex AI)"]
+    Infra["Simulated infra<br/>(render / CDN / license-check)"] -->|metrics, logs| Grafana["Grafana Cloud<br/>(Prometheus + Loki)"]
+    Grafana -->|alert fires| Agent["Continuity agent<br/>(Python, ADK)"]
+    Agent <-->|reasoning| Gemini["Gemini<br/>(Vertex AI)"]
     Agent -->|query/annotate| Grafana
-    Agent -->|write| PG[(Postgres\naudit trail)]
-    PG --> Frontend["Next.js dashboard\n(read-only)"]
+    Agent -->|write| PG[(Postgres<br/>audit trail)]
+    PG --> Frontend["Next.js dashboard<br/>(read-only)"]
 ```
 
 Full breakdown, including a step-by-step data flow for one incident, is in
