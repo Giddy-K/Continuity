@@ -1,0 +1,78 @@
+# Grafana unified alerting rules for the Continuity demo pipeline.
+# Import via Grafana's alert rule provisioning
+# (https://grafana.com/docs/grafana/latest/alerting/set-up/provision-alerting-resources/)
+# or paste into Alerting > Alert rules > Import.
+
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: continuity-render-pipeline
+    folder: Continuity
+    interval: 1m
+    rules:
+      - uid: continuity-render-latency-high
+        title: Render pipeline p95 latency high
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: { from: 600, to: 0 }
+            datasourceUid: "${GRAFANA_PROMETHEUS_DATASOURCE_UID}"
+            model:
+              expr: histogram_quantile(0.95, sum(rate(render_job_duration_seconds_bucket[5m])) by (le))
+          - refId: C
+            datasourceUid: "__expr__"
+            model:
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator: { type: gt, params: [30] }
+        labels:
+          severity: high
+          service: render-pipeline
+        annotations:
+          summary: "Render job p95 latency exceeded 30s for 5m"
+
+      - uid: continuity-cdn-5xx-spike
+        title: CDN 5xx error rate spike
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: { from: 600, to: 0 }
+            datasourceUid: "${GRAFANA_PROMETHEUS_DATASOURCE_UID}"
+            model:
+              expr: sum(rate(cdn_requests_total{status=~"5.."}[5m])) / sum(rate(cdn_requests_total[5m]))
+          - refId: C
+            datasourceUid: "__expr__"
+            model:
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator: { type: gt, params: [0.05] }
+        labels:
+          severity: critical
+          service: cdn
+        annotations:
+          summary: "CDN 5xx rate exceeded 5% for 5m"
+
+      - uid: continuity-license-check-failures
+        title: License check failure rate high
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: { from: 600, to: 0 }
+            datasourceUid: "${GRAFANA_PROMETHEUS_DATASOURCE_UID}"
+            model:
+              expr: sum(rate(license_checks_failed_total[5m])) / sum(rate(license_checks_total[5m]))
+          - refId: C
+            datasourceUid: "__expr__"
+            model:
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator: { type: gt, params: [0.1] }
+        labels:
+          severity: high
+          service: license-check
+        annotations:
+          summary: "License check failure rate exceeded 10% for 5m"
