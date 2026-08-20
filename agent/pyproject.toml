@@ -1,0 +1,36 @@
+[project]
+name = "continuity-agent"
+version = "0.1.0"
+description = "Continuity - autonomous incident-response agent for a media production pipeline (Grafana track, Agentic Cinema hackathon)"
+readme = "../README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+    "google-cloud-aiplatform[agent_engines,adk]>=1.101.0",
+    "google-genai>=1.20.0",
+    "httpx>=0.27.0",
+    "psycopg[binary]>=3.2.0",
+    "pydantic>=2.8.0",
+    "python-dotenv>=1.0.1",
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "ruff>=0.6.0",
+]
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["*"]
+exclude = ["tests*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
